@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação de Troca — Oficina do Smartphone</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F4F0;
+  --surface: #FFFFFF;
+  --surface2: #EFEFEB;
+  --border: rgba(0,0,0,0.1);
+  --border2: rgba(0,0,0,0.18);
+  --text: #1A1A18;
+  --text2: #6B6B66;
+  --text3: #9C9C96;
+  --purple: #534AB7;
+  --purple-light: #EEEDFE;
+  --purple-dark: #3C3489;
+  --green: #0F6E56;
+  --green-light: #E1F5EE;
+  --red: #A32D2D;
+  --red-light: #FCEBEB;
+  --amber: #854F0B;
+  --amber-light: #FAEEDA;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.header{background:var(--text);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.header-logo{width:30px;height:30px;background:var(--purple);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;color:#fff;font-weight:500;flex-shrink:0}
+.header-title{font-size:14px;font-weight:600;color:#fff}
+.header-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:1px}
+.tab-bar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 14px;position:sticky;top:58px;z-index:99}
+.tab{padding:13px 16px;font-size:13px;font-weight:500;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;font-family:'DM Sans',sans-serif}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple)}
+.tab.locked{opacity:.5}
+.section{display:none}.section.active{display:block}
+.content{padding:14px;max-width:540px;margin:0 auto}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 17px;margin-bottom:11px}
+.step-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px}
+select,input[type=text],input[type=number],input[type=password]{width:100%;padding:9px 11px;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);appearance:none;transition:border-color .2s}
+select:focus,input:focus{outline:none;border-color:var(--purple)}
+.valor-box{margin-top:9px;padding:9px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:13px;color:var(--text2);display:flex;justify-content:space-between;align-items:center}
+.valor-box span{font-size:15px;font-weight:600;color:var(--text);font-family:'DM Mono',monospace}
+.group-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.excl-tag{font-size:10px;font-weight:600;font-family:'DM Mono',monospace;background:var(--red-light);color:var(--red);padding:2px 6px;border-radius:4px;letter-spacing:.04em}
+.radio-group{display:flex;flex-direction:column;gap:6px}
+.radio-opt{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:14px;color:var(--text);transition:all .15s;user-select:none}
+.radio-opt input[type=radio]{width:15px;height:15px;cursor:pointer;accent-color:var(--purple);flex-shrink:0}
+.radio-opt.sel-ok{border-color:var(--purple);background:var(--purple-light)}
+.radio-opt.sel-bad{border-color:var(--red);background:var(--red-light)}
+.check-group{display:flex;flex-direction:column;gap:13px}
+.check-item{padding-bottom:13px;border-bottom:1px solid var(--border)}
+.check-item:last-child{border-bottom:none;padding-bottom:0}
+.bat-row{display:flex;align-items:center;gap:9px;margin-top:7px}
+.bat-row input[type=number]{width:85px;font-family:'DM Mono',monospace}
+.bat-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500;margin-top:7px}
+.bat-badge.ok{background:var(--green-light);color:var(--green)}
+.bat-badge.warn{background:var(--amber-light);color:var(--amber)}
+.bat-badge.bad{background:var(--red-light);color:var(--red)}
+.bat-guide{margin-top:7px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;line-height:1.8}
+.btn{width:100%;padding:12px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;border:1px solid var(--border2);border-radius:var(--radius-sm);background:none;color:var(--text);cursor:pointer;margin-top:7px;transition:background .15s}
+.btn:hover{background:var(--surface2)}
+.btn-primary{background:var(--purple);color:#fff;border-color:var(--purple);font-size:15px;padding:13px;border-radius:var(--radius)}
+.btn-primary:hover{background:var(--purple-dark);border-color:var(--purple-dark)}
+.btn-green{background:var(--green);color:#fff;border-color:var(--green);font-size:15px;padding:13px;border-radius:var(--radius)}
+.btn-green:hover{background:#085041}
+.result-ok{background:var(--green-light);border:1px solid rgba(15,110,86,.25);border-radius:var(--radius);padding:16px;margin-top:11px}
+.result-bad{background:var(--red-light);border:1px solid rgba(163,45,45,.25);border-radius:var(--radius);padding:16px;margin-top:11px}
+.result-tag{font-size:10px;font-family:'DM Mono',monospace;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.result-ok .result-tag{color:var(--green)}.result-bad .result-tag{color:var(--red)}
+.result-big{font-size:32px;font-weight:600;font-family:'DM Mono',monospace;line-height:1.1}
+.result-ok .result-big{color:#085041}.result-bad .result-big{color:#791F1F}
+.result-sub{font-size:12px;margin-top:3px}
+.result-ok .result-sub{color:var(--green)}.result-bad .result-sub{color:var(--red)}
+.breakdown{margin-top:13px;border-top:1px solid rgba(0,0,0,.08);padding-top:11px}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px;border-bottom:1px solid rgba(0,0,0,.06)}
+.brow:last-child{border-bottom:none}
+.brow .lbl{color:var(--text2)}.val-pos{color:var(--green);font-family:'DM Mono',monospace;font-weight:500}.val-neg{color:var(--red);font-family:'DM Mono',monospace;font-weight:500}
+.recusa-tag{background:var(--red-light);color:var(--red);font-size:11px;font-weight:600;padding:2px 7px;border-radius:5px;font-family:'DM Mono',monospace}
+.bonus-box{background:var(--surface);border:1px solid rgba(83,74,183,.3);border-radius:var(--radius);padding:16px;margin-top:11px}
+.bonus-tag{font-size:10px;font-family:'DM Mono',monospace;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:13px}
+.bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.bonus-metric{background:var(--purple-light);border-radius:var(--radius-sm);padding:11px 13px}
+.bonus-metric-label{font-size:11px;color:var(--purple);margin-bottom:3px;font-weight:500}
+.bonus-metric-val{font-size:21px;font-weight:600;color:var(--purple-dark);font-family:'DM Mono',monospace}
+.slider-label{font-size:13px;color:var(--text2);margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
+.slider-label strong{font-family:'DM Mono',monospace;font-size:15px;color:var(--text)}
+input[type=range]{width:100%;height:6px;accent-color:var(--purple);cursor:pointer;margin-bottom:5px}
+.slider-limits{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.divider{height:1px;background:var(--border);margin:14px 0}
+.perf-header{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px}
+.perf-header strong{font-family:'DM Mono',monospace;color:var(--text)}
+.perf-track{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.perf-fill{height:100%;border-radius:99px;transition:width .35s ease,background .35s ease}
+.perf-foot{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px;font-family:'DM Mono',monospace}
+
+/* CONFIG & PAINEL */
+.cfg-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.cfg-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.cfg-row:last-child{border-bottom:none}
+.cfg-label{flex:1;color:var(--text2)}
+.cfg-marca{min-width:68px;color:var(--text3);font-size:12px}
+.cfg-modelo{flex:1;color:var(--text)}
+.cfg-row input[type=number]{width:85px;font-family:'DM Mono',monospace;font-size:13px}
+.del-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:3px 6px;border-radius:4px;transition:background .15s,color .15s}
+.del-btn:hover{background:var(--red-light);color:var(--red)}
+.add-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.add-row input{flex:1;min-width:75px}
+.perc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.perc-item{display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:12px;color:var(--text2);padding:5px 0;border-bottom:1px solid var(--border)}
+.perc-item:nth-last-child(-n+2){border-bottom:none}
+.perc-item input[type=number]{width:55px;font-family:'DM Mono',monospace;font-size:13px;text-align:right}
+.cfg-inline{display:flex;align-items:center;gap:7px}
+.cfg-inline input[type=number]{width:68px;font-family:'DM Mono',monospace}
+.cfg-inline span{font-size:13px;color:var(--text2)}
+.cfg-example{margin-top:9px;font-size:12px;color:var(--text3);background:var(--surface2);padding:7px 11px;border-radius:var(--radius-sm);font-family:'DM Mono',monospace;line-height:1.8}
+.cfg-example strong{color:var(--purple)}
+.save-msg{font-size:13px;text-align:center;margin-top:7px;color:var(--green);height:19px;font-family:'DM Mono',monospace}
+.excl-notice{background:#FFF5F5;border:1px solid rgba(163,45,45,.2);border-radius:var(--radius-sm);padding:7px 11px;font-size:12px;color:var(--red);margin-bottom:13px;font-weight:500}
+
+/* LOCK SCREEN */
+.lock-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center}
+.lock-icon{width:52px;height:52px;background:var(--surface2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:22px}
+.lock-title{font-size:17px;font-weight:600;margin-bottom:6px}
+.lock-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
+.lock-input{max-width:240px;width:100%;margin-bottom:10px}
+.lock-err{font-size:13px;color:var(--red);margin-top:6px;height:18px;font-family:'DM Mono',monospace}
+
+/* PAINEL */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;font-family:'DM Mono',monospace}
+.stat-val{font-size:22px;font-weight:600;color:var(--text);font-family:'DM Mono',monospace}
+.stat-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.colab-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;margin-bottom:9px}
+.colab-name{font-size:15px;font-weight:600;margin-bottom:10px;color:var(--text)}
+.colab-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.colab-metric{background:var(--surface2);border-radius:var(--radius-sm);padding:9px 11px}
+.colab-metric-label{font-size:11px;color:var(--text3);margin-bottom:3px}
+.colab-metric-val{font-size:16px;font-weight:600;font-family:'DM Mono',monospace;color:var(--text)}
+.record-table{width:100%;border-collapse:collapse;font-size:12px}
+.record-table th{text-align:left;padding:7px 9px;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em;font-weight:500}
+.record-table td{padding:8px 9px;border-bottom:1px solid var(--border);color:var(--text2)}
+.record-table tr:last-child td{border-bottom:none}
+.record-table td:first-child{color:var(--text);font-weight:500}
+.filter-row{display:flex;gap:8px;margin-bottom:12px}
+.filter-row select{flex:1}
+.empty-state{text-align:center;padding:32px 16px;color:var(--text3);font-size:13px}
+.badge-vendedor{display:inline-block;background:var(--purple-light);color:var(--purple);font-size:11px;padding:2px 7px;border-radius:5px;font-weight:500}
+.month-title{font-size:16px;font-weight:600;margin-bottom:14px;color:var(--text)}
+.page-title{font-size:17px;font-weight:600;margin-bottom:3px}
+.page-sub{font-size:13px;color:var(--text2);margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">OS</div>
+  <div>
+    <div class="header-title">Avaliação de Troca</div>
+    <div class="header-sub">Oficina do Smartphone — Centro</div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="showTab('avaliacao')">Avaliação</button>
+  <button class="tab locked" onclick="tryTab('painel')">Painel</button>
+  <button class="tab locked" onclick="tryTab('config')">Config.</button>
+</div>
+
+<!-- AVALIAÇÃO -->
+<div class="section active" id="sec-avaliacao">
+  <div class="content">
+
+    <div class="card">
+      <div class="step-label">00 — Vendedor(a)</div>
+      <select id="sel-vendedor">
+        <option value="">Selecione o vendedor(a)</option>
+        <option>Henrique</option>
+        <option>Luana</option>
+        <option>Breno</option>
+        <option>Eduardo</option>
+        <option>Milena</option>
+        <option>Novato</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="step-label">01 — Marca</div>
+      <select id="sel-marca" onchange="updateModelos()">
+        <option value="">Selecione a marca</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="step-label">02 — Modelo</div>
+      <select id="sel-modelo" onchange="updateValorBase()">
+        <option value="">Selecione o modelo</option>
+      </select>
+      <div class="valor-box">
+        <span style="font-size:13px;color:var(--text2);font-family:'DM Sans',sans-serif;font-weight:400">Valor de revenda</span>
+        <span id="valor-base-show">—</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="step-label">03 — IMEI do aparelho</div>
+      <input type="text" id="imei-input" placeholder="Digite o IMEI (15 dígitos)" maxlength="20" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      <div style="margin-top:6px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">*611# ou Configurações → Sobre o dispositivo</div>
+    </div>
+
+    <div class="card">
+      <div class="step-label">04 — Critérios de exclusão</div>
+      <div class="excl-notice">Qualquer item com problema = troca recusada.</div>
+      <div class="check-group">
+        <div class="check-item">
+          <div class="group-title">Dano por água <span class="excl-tag">exclusão</span></div>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="agua" value="sim" onchange="rDanger(this)"> Sim — foi molhado</label>
+            <label class="radio-opt sel-ok"><input type="radio" name="agua" value="nao" onchange="rOk(this)" checked> Não</label>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="group-title">IMEI em lista negra <span class="excl-tag">exclusão</span></div>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="imei" value="sim" onchange="rDanger(this)"> Sim — bloqueado / roubado</label>
+            <label class="radio-opt sel-ok"><input type="radio" name="imei" value="nao" onchange="rOk(this)" checked> Não</label>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="group-title">Wi-Fi <span class="excl-tag">exclusão</span></div>
+          <div class="radio-group">
+            <label class="radio-opt sel-ok"><input type="radio" name="wifi" value="ok" onchange="rOk(this)" checked> Funciona normalmente</label>
+            <label class="radio-opt"><input type="radio" name="wifi" value="defeito" onchange="rDanger(this)"> Não funciona</label>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="group-title">Chip / sinal <span class="excl-tag">exclusão</span></div>
+          <div class="radio-group">
+            <label class="radio-opt sel-ok"><input type="radio" name="chip" value="ok" onchange="rOk(this)" checked> Funciona normalmente</label>
+            <label class="radio-opt"><input type="radio" name="chip" value="defeito" onchange="rDanger(this)"> Não funciona</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="step-label">05 — Estado do aparelho</div>
+      <div class="check-group">
+        <div class="check-item">
+          <div class="group-title">Tela</div>
+          <div class="radio-group">
+            <label class="radio-opt sel-ok"><input type="radio" name="tela" value="otima" onchange="rOk(this)" checked> Ótima — sem marcas</label>
+            <label class="radio-opt"><input type="radio" name="tela" value="manchada" onchange="rOk(this)"> Manchada / queimada</label>
+            <label class="radio-opt"><input type="radio" name="tela" value="trincada" onchange="rOk(this)"> Trincada</label>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="group-title">Carcaça / corpo</div>
+          <div class="radio-group">
+            <label class="radio-opt sel-ok"><input type="radio" name="carcaca" value="otimo" onchange="rOk(this)" checked> Ótimo — sem riscos</label>
+            <label class="radio-opt"><input type="radio" name="carcaca" value="riscado" onchange="rOk(this)"> Riscado</label>
+            <label class="radio-opt"><input type="radio" name="carcaca" value="amassado" onchange="rOk(this)"> Amassado / dano visível</label>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="group-title">Botões e conexões</div>
+          <div class="radio-group">
+            <label class="radio-opt sel-ok"><input type="radio" name="botoes" value="ok" onchange="rOk(this)" checked> Tudo funcionando</label>
+            <label class="radio-opt"><input type="radio" name="botoes" value="defeito" onchange="rOk(this)"> Algum defeito</label>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="group-title">Câmera traseira e flash</div>
+          <div class="radio-group">
+            <label class="radio-opt sel-ok"><input type="radio" name="cam-traseira" value="boa" onchange="rOk(this)" checked> Boa — funcionando normalmente</label>
+            <label class="radio-opt"><input type="radio" name="cam-traseira" value="defeito" onchange="rOk(this)"> Com mancha, embaçada ou sem funcionar</label>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="group-title">Câmera frontal</div>
+          <div class="radio-group">
+            <label class="radio-opt sel-ok"><input type="radio" name="cam-frontal" value="boa" onchange="rOk(this)" checked> Boa — funcionando normalmente</label>
+            <label class="radio-opt"><input type="radio" name="cam-frontal" value="defeito" onchange="rOk(this)"> Sem funcionar</label>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="group-title">Saúde da bateria</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:7px">Digite o percentual do app de diagnóstico:</div>
+          <div class="bat-row">
+            <input type="number" id="bat-pct" min="1" max="100" placeholder="ex: 83" oninput="updateBat()">
+            <span style="font-size:14px;color:var(--text2)">%</span>
+          </div>
+          <div id="bat-badge"></div>
+          <div class="bat-guide">&gt; 86% → bateria boa<br>80–86% → próxima da manutenção<br>&lt; 80% → em manutenção</div>
+        </div>
+        <div class="check-item">
+          <div class="group-title">Face ID / digital</div>
+          <div class="radio-group">
+            <label class="radio-opt sel-ok"><input type="radio" name="biometria" value="ok" onchange="rOk(this)" checked> Funcionando</label>
+            <label class="radio-opt"><input type="radio" name="biometria" value="defeito" onchange="rOk(this)"> Com defeito</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="calcular()">Calcular valor de entrada</button>
+    <div id="resultado" style="display:none"></div>
+    <button class="btn" style="margin-top:7px" onclick="resetForm()">Nova avaliação</button>
+    <div style="height:24px"></div>
+  </div>
+</div>
+
+<!-- PAINEL (lock) -->
+<div class="section" id="sec-painel">
+  <div id="painel-lock">
+    <div class="lock-screen">
+      <div class="lock-icon">🔒</div>
+      <div class="lock-title">Área gerencial</div>
+      <div class="lock-sub">Digite a senha para acessar o painel de comissões e registros.</div>
+      <input class="lock-input" type="password" id="painel-pwd" placeholder="Senha" onkeydown="if(event.key==='Enter')unlockPainel()">
+      <button class="btn btn-primary" style="max-width:240px" onclick="unlockPainel()">Entrar</button>
+      <div class="lock-err" id="painel-err"></div>
+    </div>
+  </div>
+  <div id="painel-content" style="display:none">
+    <div class="content">
+      <div class="page-title">Painel gerencial</div>
+      <p class="page-sub">Registros de avaliações confirmadas.</p>
+      <div class="filter-row">
+        <select id="filter-mes" onchange="renderPainel()">
+          <option value="">Todos os meses</option>
+        </select>
+        <select id="filter-vendedor" onchange="renderPainel()">
+          <option value="">Todos os vendedores</option>
+          <option>Henrique</option><option>Luana</option><option>Breno</option>
+          <option>Eduardo</option><option>Milena</option><option>Novato</option>
+        </select>
+      </div>
+      <div id="painel-stats"></div>
+      <div id="painel-colabs"></div>
+      <div class="card">
+        <div class="cfg-title">Registros detalhados</div>
+        <div id="painel-registros"></div>
+      </div>
+      <button class="btn" onclick="exportarCSV()">Exportar CSV</button>
+      <div style="height:24px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIG (lock) -->
+<div class="section" id="sec-config">
+  <div id="config-lock">
+    <div class="lock-screen">
+      <div class="lock-icon">⚙️</div>
+      <div class="lock-title">Configurações</div>
+      <div class="lock-sub">Digite a senha para acessar as configurações do sistema.</div>
+      <input class="lock-input" type="password" id="config-pwd" placeholder="Senha" onkeydown="if(event.key==='Enter')unlockConfig()">
+      <button class="btn btn-primary" style="max-width:240px" onclick="unlockConfig()">Entrar</button>
+      <div class="lock-err" id="config-err"></div>
+    </div>
+  </div>
+  <div id="config-content" style="display:none">
+    <div class="content">
+      <div class="page-title">Configurações</div>
+      <p class="page-sub">Margens, bônus, descontos e modelos.</p>
+
+      <div class="card">
+        <div class="cfg-title">Alterar senha</div>
+        <div style="display:flex;gap:8px">
+          <input type="password" id="nova-senha" placeholder="Nova senha">
+          <button class="btn" style="width:auto;margin-top:0;padding:9px 16px;font-size:13px" onclick="alterarSenha()">Salvar</button>
+        </div>
+        <div id="senha-msg" style="font-size:12px;color:var(--green);margin-top:6px;height:16px;font-family:'DM Mono',monospace"></div>
+      </div>
+
+      <div class="card">
+        <div class="cfg-title">Margem da loja</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:11px">Percentual do valor ajustado que a loja paga ao cliente.</div>
+        <div style="display:flex;gap:18px;margin-bottom:11px">
+          <div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:5px">MÍNIMO</div>
+            <div class="cfg-inline"><input type="number" id="cfg-min" value="40" min="10" max="90"><span>%</span></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:5px">MÁXIMO</div>
+            <div class="cfg-inline"><input type="number" id="cfg-max" value="70" min="10" max="95"><span>%</span></div>
+          </div>
+        </div>
+        <div class="cfg-example">Valor ajustado R$1.000 → proposta entre <strong id="ex-min">R$400</strong> e <strong id="ex-max">R$700</strong></div>
+      </div>
+
+      <div class="card">
+        <div class="cfg-title">Bônus do vendedor</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:11px">Percentual do lucro da loja que o vendedor recebe como bônus.</div>
+        <div class="cfg-inline">
+          <input type="number" id="cfg-bonus" value="5" min="1" max="30">
+          <span>% do lucro da loja</span>
+        </div>
+        <div class="cfg-example">Loja lucra R$500 → vendedor ganha <strong id="ex-bonus">R$25</strong></div>
+      </div>
+
+      <div class="card">
+        <div class="cfg-title">Descontos por estado (%)</div>
+        <div class="perc-grid">
+          <div class="perc-item"><span>Tela manchada</span><input type="number" id="p-tela-manchada" value="10" min="0" max="50"></div>
+          <div class="perc-item"><span>Tela trincada</span><input type="number" id="p-tela-trincada" value="20" min="0" max="50"></div>
+          <div class="perc-item"><span>Carcaça riscada</span><input type="number" id="p-carc-riscada" value="5" min="0" max="50"></div>
+          <div class="perc-item"><span>Carcaça amassada</span><input type="number" id="p-carc-amassada" value="10" min="0" max="50"></div>
+          <div class="perc-item"><span>Botão/conexão</span><input type="number" id="p-botoes" value="10" min="0" max="50"></div>
+          <div class="perc-item"><span>Câm. traseira</span><input type="number" id="p-cam-traseira" value="15" min="0" max="50"></div>
+          <div class="perc-item"><span>Câm. frontal</span><input type="number" id="p-cam-frontal" value="10" min="0" max="50"></div>
+          <div class="perc-item"><span>Bateria 80–86%</span><input type="number" id="p-bat-warn" value="10" min="0" max="50"></div>
+          <div class="perc-item"><span>Bateria &lt;80%</span><input type="number" id="p-bat-bad" value="20" min="0" max="50"></div>
+          <div class="perc-item"><span>Biometria</span><input type="number" id="p-biometria" value="5" min="0" max="50"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cfg-title">Modelos cadastrados</div>
+        <div id="lista-modelos"></div>
+        <div class="add-row">
+          <input type="text" id="new-marca" placeholder="Marca">
+          <input type="text" id="new-modelo" placeholder="Modelo">
+          <input type="number" id="new-valor" placeholder="R$ revenda">
+          <button class="btn" style="width:auto;margin-top:0;padding:9px 14px;font-size:13px" onclick="addModelo()">+ Add</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="salvarConfig()">Salvar configurações</button>
+      <div class="save-msg" id="save-msg"></div>
+      <div style="height:24px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'oficina_cfg_v2';
+const MODELOS_KEY = 'oficina_modelos_v2';
+const REGISTROS_KEY = 'oficina_registros_v1';
+const SENHA_KEY = 'oficina_senha_v1';
+
+let modelos = [
+  {marca:"Samsung",modelo:"Galaxy A15",valor:550},{marca:"Samsung",modelo:"Galaxy A35",valor:900},
+  {marca:"Samsung",modelo:"Galaxy A55",valor:1300},{marca:"Samsung",modelo:"Galaxy S23",valor:2200},
+  {marca:"Samsung",modelo:"Galaxy S24",valor:2800},{marca:"iPhone",modelo:"iPhone 11",valor:1200},
+  {marca:"iPhone",modelo:"iPhone 12",valor:1500},{marca:"iPhone",modelo:"iPhone 13",valor:2000},
+  {marca:"iPhone",modelo:"iPhone 14",valor:2500},{marca:"iPhone",modelo:"iPhone 15",valor:3200},
+  {marca:"Motorola",modelo:"Moto G34",valor:500},{marca:"Motorola",modelo:"Moto G54",valor:700},
+  {marca:"Motorola",modelo:"Edge 50",valor:1100},{marca:"Xiaomi",modelo:"Redmi 13C",valor:450},
+  {marca:"Xiaomi",modelo:"Redmi Note 13",valor:750},{marca:"Xiaomi",modelo:"Poco X6",valor:1100},
+  {marca:"realme",modelo:"C61",valor:400},{marca:"realme",modelo:"12 Pro",valor:850},
+];
+
+let cfg = {min:40,max:70,bonus:5};
+let registros = [];
+let senha = 'oficina2025';
+let lastBase=0,lastMin=0,lastMax=0,lastLucro=0;
+let painelUnlocked=false,configUnlocked=false;
+
+function loadAll(){
+  try{
+    const c=localStorage.getItem(STORAGE_KEY);
+    const m=localStorage.getItem(MODELOS_KEY);
+    const r=localStorage.getItem(REGISTROS_KEY);
+    const s=localStorage.getItem(SENHA_KEY);
+    if(c)cfg=JSON.parse(c);
+    if(m)modelos=JSON.parse(m);
+    if(r)registros=JSON.parse(r);
+    if(s)senha=s;
+  }catch(e){}
+}
+
+function saveAll(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(cfg));
+    localStorage.setItem(MODELOS_KEY,JSON.stringify(modelos));
+    localStorage.setItem(REGISTROS_KEY,JSON.stringify(registros));
+    localStorage.setItem(SENHA_KEY,senha);
+  }catch(e){}
+}
+
+function pct(id){return(parseFloat(document.getElementById(id)?.value)||0)/100}
+function val(name){return document.querySelector(`input[name="${name}"]:checked`)?.value}
+function fmt(n){return'R$ '+Math.round(n).toLocaleString('pt-BR')}
+
+function getBatLevel(){
+  const v=parseInt(document.getElementById('bat-pct')?.value);
+  if(!v||isNaN(v))return null;
+  if(v>86)return'ok';if(v>=80)return'warn';return'bad';
+}
+
+function updateBat(){
+  const badge=document.getElementById('bat-badge');
+  const level=getBatLevel();
+  const v=parseInt(document.getElementById('bat-pct')?.value);
+  if(!level){badge.innerHTML='';return;}
+  const msgs={ok:`Bateria boa — ${v}%`,warn:`Próxima da manutenção — ${v}%`,bad:`Em manutenção — ${v}%`};
+  badge.innerHTML=`<span class="bat-badge ${level}">${msgs[level]}</span>`;
+}
+
+function showTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const tabEl=document.querySelector(`[onclick*="${tab}"]`)||document.querySelector(`[onclick="showTab('${tab}')"]`);
+  if(tabEl)tabEl.classList.add('active');
+  document.getElementById('sec-'+tab).classList.add('active');
+  if(tab==='config'&&configUnlocked){renderConfigModelos();updateCfgExamples();applyConfigToInputs();}
+  if(tab==='painel'&&painelUnlocked){populateMesFilter();renderPainel();}
+}
+
+function tryTab(tab){
+  showTab(tab);
+}
+
+function unlockPainel(){
+  const pwd=document.getElementById('painel-pwd').value;
+  if(pwd===senha){
+    painelUnlocked=true;
+    document.getElementById('painel-lock').style.display='none';
+    document.getElementById('painel-content').style.display='block';
+    populateMesFilter();renderPainel();
+  }else{
+    document.getElementById('painel-err').textContent='Senha incorreta.';
+    setTimeout(()=>document.getElementById('painel-err').textContent='',2000);
+  }
+}
+
+function unlockConfig(){
+  const pwd=document.getElementById('config-pwd').value;
+  if(pwd===senha){
+    configUnlocked=true;
+    document.getElementById('config-lock').style.display='none';
+    document.getElementById('config-content').style.display='block';
+    renderConfigModelos();updateCfgExamples();applyConfigToInputs();
+  }else{
+    document.getElementById('config-err').textContent='Senha incorreta.';
+    setTimeout(()=>document.getElementById('config-err').textContent='',2000);
+  }
+}
+
+function alterarSenha(){
+  const nova=document.getElementById('nova-senha').value.trim();
+  if(!nova){return;}
+  senha=nova;
+  saveAll();
+  document.getElementById('nova-senha').value='';
+  document.getElementById('senha-msg').textContent='✓ senha alterada';
+  setTimeout(()=>document.getElementById('senha-msg').textContent='',2500);
+}
+
+function rOk(input){
+  const g=input.closest('.radio-group');
+  g.querySelectorAll('.radio-opt').forEach(o=>{o.classList.remove('sel-ok','sel-bad');});
+  input.closest('.radio-opt').classList.add('sel-ok');
+}
+
+function rDanger(input){
+  const g=input.closest('.radio-group');
+  g.querySelectorAll('.radio-opt').forEach(o=>{o.classList.remove('sel-ok','sel-bad');});
+  input.closest('.radio-opt').classList.add('sel-bad');
+}
+
+function getMarcas(){return[...new Set(modelos.map(m=>m.marca))];}
+
+function populateMarcas(){
+  const sel=document.getElementById('sel-marca');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Selecione a marca</option>';
+  getMarcas().forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;if(m===cur)o.selected=true;sel.appendChild(o);});
+}
+
+function updateModelos(){
+  const marca=document.getElementById('sel-marca').value;
+  const sel=document.getElementById('sel-modelo');
+  sel.innerHTML='<option value="">Selecione o modelo</option>';
+  modelos.filter(m=>m.marca===marca).forEach(m=>{const o=document.createElement('option');o.value=m.modelo;o.textContent=m.modelo;sel.appendChild(o);});
+  document.getElementById('valor-base-show').textContent='—';
+}
+
+function updateValorBase(){
+  const marca=document.getElementById('sel-marca').value;
+  const modelo=document.getElementById('sel-modelo').value;
+  const found=modelos.find(m=>m.marca===marca&&m.modelo===modelo);
+  document.getElementById('valor-base-show').textContent=found?fmt(found.valor):'—';
+}
+
+function calcular(){
+  const vendedor=document.getElementById('sel-vendedor').value;
+  const marca=document.getElementById('sel-marca').value;
+  const modelo=document.getElementById('sel-modelo').value;
+  const imei=document.getElementById('imei-input').value.trim();
+  const found=modelos.find(m=>m.marca===marca&&m.modelo===modelo);
+  const res=document.getElementById('resultado');
+
+  if(!vendedor){res.style.display='block';res.innerHTML=`<div class="result-bad"><div class="result-tag">Atenção</div><div style="font-size:15px;color:#791F1F;margin-top:4px">Selecione o vendedor(a) para continuar.</div></div>`;return;}
+  if(!found){res.style.display='block';res.innerHTML=`<div class="result-bad"><div class="result-tag">Atenção</div><div style="font-size:15px;color:#791F1F;margin-top:4px">Selecione marca e modelo para continuar.</div></div>`;return;}
+  if(!imei||imei.length<14){res.style.display='block';res.innerHTML=`<div class="result-bad"><div class="result-tag">Atenção</div><div style="font-size:15px;color:#791F1F;margin-top:4px">Digite o IMEI do aparelho para continuar.</div></div>`;return;}
+
+  const batPct=parseInt(document.getElementById('bat-pct')?.value);
+  if(!batPct||isNaN(batPct)||batPct<1||batPct>100){res.style.display='block';res.innerHTML=`<div class="result-bad"><div class="result-tag">Atenção</div><div style="font-size:15px;color:#791F1F;margin-top:4px">Digite a saúde da bateria para continuar.</div></div>`;return;}
+
+  const motivos=[];
+  if(val('agua')==='sim')motivos.push('Dano por água');
+  if(val('imei')==='sim')motivos.push('IMEI em lista negra');
+  if(val('wifi')==='defeito')motivos.push('Wi-Fi não funciona');
+  if(val('chip')==='defeito')motivos.push('Chip / sinal não funciona');
+
+  if(motivos.length>0){
+    res.style.display='block';
+    res.innerHTML=`<div class="result-bad"><div class="result-tag">Troca recusada</div><div class="result-big">Não aceitar</div><div class="breakdown">${motivos.map(m=>`<div class="brow"><span class="lbl">${m}</span><span class="recusa-tag">recusa</span></div>`).join('')}</div></div>`;
+    res.scrollIntoView({behavior:'smooth',block:'nearest'});
+    return;
+  }
+
+  let base=found.valor;
+  let rows=[{label:'Valor de revenda — '+modelo,val:base,neg:false}];
+
+  function aplicar(cond,label,idPct){
+    if(cond){const d=Math.round(base*pct(idPct));rows.push({label,val:d,neg:true});base-=d;}
+  }
+
+  aplicar(val('tela')==='manchada','Desconto — tela manchada','p-tela-manchada');
+  aplicar(val('tela')==='trincada','Desconto — tela trincada','p-tela-trincada');
+  aplicar(val('carcaca')==='riscado','Desconto — carcaça riscada','p-carc-riscada');
+  aplicar(val('carcaca')==='amassado','Desconto — carcaça amassada','p-carc-amassada');
+  aplicar(val('botoes')==='defeito','Desconto — botão/conexão','p-botoes');
+  aplicar(val('cam-traseira')==='defeito','Desconto — câmera traseira/flash','p-cam-traseira');
+  aplicar(val('cam-frontal')==='defeito','Desconto — câmera frontal','p-cam-frontal');
+
+  const batLevel=getBatLevel();
+  aplicar(batLevel==='warn',`Desconto — bateria próx. manutenção (${batPct}%)`,'p-bat-warn');
+  aplicar(batLevel==='bad',`Desconto — bateria em manutenção (${batPct}%)`,'p-bat-bad');
+  aplicar(val('biometria')==='defeito','Desconto — biometria com defeito','p-biometria');
+
+  const valorAjustado=Math.round(base);
+  const minOffer=Math.round(valorAjustado*(cfg.min/100));
+  const maxOffer=Math.round(valorAjustado*(cfg.max/100));
+
+  lastBase=valorAjustado;lastMin=minOffer;lastMax=maxOffer;lastLucro=valorAjustado-minOffer;
+
+  const rowsHtml=rows.map(r=>`<div class="brow"><span class="lbl">${r.label}</span><span class="${r.neg?'val-neg':'val-pos'}">${r.neg?'-':''}${fmt(r.val)}</span></div>`).join('');
+
+  res.style.display='block';
+  res.innerHTML=`
+    <div class="result-ok">
+      <div class="result-tag">Avaliação do aparelho</div>
+      <div class="result-big">${fmt(valorAjustado)}</div>
+      <div class="result-sub">valor ajustado pelo estado</div>
+      <div class="breakdown">${rowsHtml}</div>
+    </div>
+    <div class="bonus-box">
+      <div class="bonus-tag">Proposta ao cliente + seu bônus</div>
+      <div class="slider-label"><span>Valor a oferecer ao cliente</span><strong id="slider-val-show">${fmt(minOffer)}</strong></div>
+      <input type="range" id="slider-oferta" min="${minOffer}" max="${maxOffer}" value="${minOffer}" step="10" oninput="updateSlider()">
+      <div class="slider-limits"><span>${fmt(minOffer)}</span><span>${fmt(maxOffer)}</span></div>
+      <div class="divider"></div>
+      <div class="bonus-grid">
+        <div class="bonus-metric"><div class="bonus-metric-label">Lucro da loja</div><div class="bonus-metric-val" id="lucro-loja">${fmt(valorAjustado-minOffer)}</div></div>
+        <div class="bonus-metric"><div class="bonus-metric-label">Seu bônus estimado</div><div class="bonus-metric-val" id="bonus-vendedor">${fmt((valorAjustado-minOffer)*(cfg.bonus/100))}</div></div>
+      </div>
+      <div class="perf-header"><span>Desempenho da negociação</span><strong id="perf-pct-label">100%</strong></div>
+      <div class="perf-track"><div class="perf-fill" id="perf-bar" style="width:100%;background:#1D9E75"></div></div>
+      <div class="perf-foot"><span>oferta máxima</span><span>oferta mínima</span></div>
+      <div class="divider"></div>
+      <button class="btn btn-green" onclick="confirmarCompra('${vendedor}','${marca}','${modelo}','${imei}',${valorAjustado},${batPct})">Confirmar compra do celular</button>
+    </div>`;
+  res.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function updateSlider(){
+  const slider=document.getElementById('slider-oferta');
+  if(!slider)return;
+  const oferta=parseInt(slider.value);
+  const lucro=lastBase-oferta;
+  const bonusVal=Math.round(lucro*(cfg.bonus/100));
+  const range=lastMax-lastMin;
+  const perf=range>0?Math.round(((lastMax-oferta)/range)*100):100;
+  document.getElementById('slider-val-show').textContent=fmt(oferta);
+  document.getElementById('lucro-loja').textContent=fmt(lucro);
+  document.getElementById('bonus-vendedor').textContent=fmt(bonusVal);
+  document.getElementById('perf-pct-label').textContent=perf+'%';
+  lastLucro=lucro;
+  const bar=document.getElementById('perf-bar');
+  bar.style.width=perf+'%';
+  bar.style.background=perf>=70?'#1D9E75':perf>=40?'#534AB7':'#BA7517';
+}
+
+function confirmarCompra(vendedor,marca,modelo,imei,valorAjustado,batPct){
+  const slider=document.getElementById('slider-oferta');
+  const ofertaCliente=slider?parseInt(slider.value):Math.round(valorAjustado*(cfg.min/100));
+  const lucro=valorAjustado-ofertaCliente;
+  const bonus=Math.round(lucro*(cfg.bonus/100));
+  const now=new Date();
+  const registro={
+    id:Date.now(),
+    data:now.toLocaleDateString('pt-BR'),
+    hora:now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+    mes:now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}),
+    mesKey:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,
+    vendedor,marca,modelo,imei,
+    valorRevenda:valorAjustado,
+    ofertaCliente,
+    lucroLoja:lucro,
+    bonusVendedor:bonus,
+    bateria:batPct
+  };
+  registros.push(registro);
+  saveAll();
+  const res=document.getElementById('resultado');
+  res.innerHTML+=`<div class="result-ok" style="margin-top:10px">
+    <div class="result-tag">Compra confirmada!</div>
+    <div style="font-size:14px;color:#085041;margin-top:4px">Registro salvo com sucesso.</div>
+    <div class="breakdown">
+      <div class="brow"><span class="lbl">Vendedor(a)</span><span class="badge-vendedor">${vendedor}</span></div>
+      <div class="brow"><span class="lbl">IMEI</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text)">${imei}</span></div>
+      <div class="brow"><span class="lbl">Pago ao cliente</span><span class="val-neg">${fmt(ofertaCliente)}</span></div>
+      <div class="brow"><span class="lbl">Lucro da loja</span><span class="val-pos">${fmt(lucro)}</span></div>
+      <div class="brow"><span class="lbl">Bônus ${vendedor}</span><span class="val-pos">${fmt(bonus)}</span></div>
+    </div>
+  </div>`;
+}
+
+function resetForm(){
+  document.getElementById('sel-vendedor').value='';
+  document.getElementById('sel-marca').value='';
+  document.getElementById('sel-modelo').innerHTML='<option value="">Selecione o modelo</option>';
+  document.getElementById('valor-base-show').textContent='—';
+  document.getElementById('bat-pct').value='';
+  document.getElementById('bat-badge').innerHTML='';
+  document.getElementById('imei-input').value='';
+  document.querySelectorAll('input[type=radio]').forEach(r=>{
+    const isDefault=['nao','otima','otimo','ok','boa'].includes(r.value);
+    r.checked=isDefault;
+    const opt=r.closest('.radio-opt');
+    if(opt){opt.classList.remove('sel-ok','sel-bad');if(isDefault)opt.classList.add('sel-ok');}
+  });
+  document.getElementById('resultado').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function populateMesFilter(){
+  const sel=document.getElementById('filter-mes');
+  const meses=[...new Set(registros.map(r=>r.mesKey))].sort().reverse();
+  sel.innerHTML='<option value="">Todos os meses</option>';
+  meses.forEach(mk=>{
+    const r=registros.find(x=>x.mesKey===mk);
+    const o=document.createElement('option');o.value=mk;o.textContent=r?r.mes:mk;sel.appendChild(o);
+  });
+}
+
+function getFiltered(){
+  const mes=document.getElementById('filter-mes')?.value;
+  const vend=document.getElementById('filter-vendedor')?.value;
+  return registros.filter(r=>{
+    if(mes&&r.mesKey!==mes)return false;
+    if(vend&&r.vendedor!==vend)return false;
+    return true;
+  });
+}
+
+function renderPainel(){
+  const filtered=getFiltered();
+  const totalTrocas=filtered.length;
+  const totalLucro=filtered.reduce((a,r)=>a+r.lucroLoja,0);
+  const totalBonus=filtered.reduce((a,r)=>a+r.bonusVendedor,0);
+
+  document.getElementById('painel-stats').innerHTML=`
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Trocas</div><div class="stat-val">${totalTrocas}</div><div class="stat-sub">confirmadas</div></div>
+      <div class="stat-card"><div class="stat-label">Lucro total</div><div class="stat-val">${fmt(totalLucro)}</div><div class="stat-sub">nas trocas</div></div>
+    </div>`;
+
+  const vendedores=['Henrique','Luana','Breno','Eduardo','Milena','Novato'];
+  const colabHtml=vendedores.map(v=>{
+    const regs=filtered.filter(r=>r.vendedor===v);
+    if(!regs.length)return'';
+    const lucro=regs.reduce((a,r)=>a+r.lucroLoja,0);
+    const bonus=regs.reduce((a,r)=>a+r.bonusVendedor,0);
+    return`<div class="colab-card">
+      <div class="colab-name">${v}</div>
+      <div class="colab-grid">
+        <div class="colab-metric"><div class="colab-metric-label">Trocas</div><div class="colab-metric-val">${regs.length}</div></div>
+        <div class="colab-metric"><div class="colab-metric-label">Lucro gerado</div><div class="colab-metric-val">${fmt(lucro)}</div></div>
+        <div class="colab-metric"><div class="colab-metric-label">Bônus a pagar</div><div class="colab-metric-val" style="color:var(--purple-dark)">${fmt(bonus)}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('painel-colabs').innerHTML=colabHtml||'';
+
+  if(!filtered.length){
+    document.getElementById('painel-registros').innerHTML='<div class="empty-state">Nenhum registro encontrado para o filtro selecionado.</div>';
+    return;
+  }
+
+  const sorted=[...filtered].reverse();
+  const rows=sorted.map(r=>`<tr>
+    <td>${r.data} ${r.hora}</td>
+    <td><span class="badge-vendedor">${r.vendedor}</span></td>
+    <td>${r.marca} ${r.modelo}</td>
+    <td style="font-family:'DM Mono',monospace;font-size:11px">${r.imei}</td>
+    <td class="val-pos">${fmt(r.lucroLoja)}</td>
+    <td class="val-pos" style="color:var(--purple-dark)">${fmt(r.bonusVendedor)}</td>
+  </tr>`).join('');
+
+  document.getElementById('painel-registros').innerHTML=`
+    <div style="overflow-x:auto">
+    <table class="record-table">
+      <thead><tr><th>Data</th><th>Vendedor</th><th>Modelo</th><th>IMEI</th><th>Lucro</th><th>Bônus</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>`;
+}
+
+function exportarCSV(){
+  const filtered=getFiltered();
+  if(!filtered.length){alert('Nenhum registro para exportar.');return;}
+  const header='Data,Hora,Vendedor,Marca,Modelo,IMEI,Valor Revenda,Oferta Cliente,Lucro Loja,Bonus Vendedor,Bateria';
+  const rows=filtered.map(r=>[r.data,r.hora,r.vendedor,r.marca,r.modelo,r.imei,r.valorRevenda,r.ofertaCliente,r.lucroLoja,r.bonusVendedor,r.bateria+'%'].join(',')).join('\n');
+  const csv=header+'\n'+rows;
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='trocas_oficina.csv';a.click();
+}
+
+function applyConfigToInputs(){
+  document.getElementById('cfg-min').value=cfg.min;
+  document.getElementById('cfg-max').value=cfg.max;
+  document.getElementById('cfg-bonus').value=cfg.bonus;
+}
+
+function updateCfgExamples(){
+  const mn=parseFloat(document.getElementById('cfg-min')?.value)||40;
+  const mx=parseFloat(document.getElementById('cfg-max')?.value)||70;
+  const bn=parseFloat(document.getElementById('cfg-bonus')?.value)||5;
+  document.getElementById('ex-min').textContent='R$ '+Math.round(1000*mn/100).toLocaleString('pt-BR');
+  document.getElementById('ex-max').textContent='R$ '+Math.round(1000*mx/100).toLocaleString('pt-BR');
+  document.getElementById('ex-bonus').textContent='R$ '+Math.round(500*bn/100).toLocaleString('pt-BR');
+}
+
+function renderConfigModelos(){
+  const lista=document.getElementById('lista-modelos');
+  if(!modelos.length){lista.innerHTML='<div style="font-size:13px;color:var(--text3);padding:8px 0">Nenhum modelo cadastrado.</div>';return;}
+  lista.innerHTML=modelos.map((m,i)=>`
+    <div class="cfg-row">
+      <span class="cfg-marca">${m.marca}</span>
+      <span class="cfg-modelo">${m.modelo}</span>
+      <input type="number" value="${m.valor}" onchange="modelos[${i}].valor=parseInt(this.value)||0">
+      <button class="del-btn" onclick="removeModelo(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removeModelo(i){if(!confirm(`Remover "${modelos[i].modelo}"?`))return;modelos.splice(i,1);renderConfigModelos();populateMarcas();}
+
+function addModelo(){
+  const marca=document.getElementById('new-marca').value.trim();
+  const modelo=document.getElementById('new-modelo').value.trim();
+  const valor=parseInt(document.getElementById('new-valor').value)||0;
+  if(!marca||!modelo||!valor){alert('Preencha marca, modelo e valor de revenda.');return;}
+  modelos.push({marca,modelo,valor});
+  document.getElementById('new-marca').value='';document.getElementById('new-modelo').value='';document.getElementById('new-valor').value='';
+  renderConfigModelos();populateMarcas();
+}
+
+function salvarConfig(){
+  cfg.min=parseFloat(document.getElementById('cfg-min').value)||40;
+  cfg.max=parseFloat(document.getElementById('cfg-max').value)||70;
+  cfg.bonus=parseFloat(document.getElementById('cfg-bonus').value)||5;
+  saveAll();updateCfgExamples();
+  const msg=document.getElementById('save-msg');
+  msg.textContent='✓ configurações salvas';
+  setTimeout(()=>msg.textContent='',2500);
+}
+
+document.getElementById('cfg-min')?.addEventListener('input',updateCfgExamples);
+document.getElementById('cfg-max')?.addEventListener('input',updateCfgExamples);
+document.getElementById('cfg-bonus')?.addEventListener('input',updateCfgExamples);
+
+loadAll();
+populateMarcas();
+updateCfgExamples();
+</script>
+</body>
+</html>
